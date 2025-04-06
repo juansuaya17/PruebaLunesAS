@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 import { IQueue } from '../queues-providers/IQueue';
 
 // Define el tipo FilterFunction, que es una función que toma cualquier entrada y devuelve cualquier salida.
-type FilterFunction<T> = (input: T) => T;
+type FilterFunction<T> = (input: T) => Promise<T> | T;
 
 // Declara la clase Pipeline, que extiende EventEmitter para poder emitir eventos.
 export class Pipeline<T> extends EventEmitter {
@@ -36,7 +36,7 @@ export class Pipeline<T> extends EventEmitter {
             filterQueue.process(async (data: T) => {
                 try {
                     // Aplica la función de filtro a los datos.
-                    const filteredData = filter(data);
+                    const filteredData = await filter(data);
                     // Envia los datos filtrados al siguiente filtro en la cadena.
                     this.enqueueNextFilter(index, filteredData);
                 } catch (err) {

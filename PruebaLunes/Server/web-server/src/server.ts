@@ -1,17 +1,16 @@
 import express, { Express, Request, Response } from 'express';
 import { QueueFactory } from '../../PipelineServer/pipeline/QueueFactory';
 import { Pipeline } from '../../PipelineServer/pipeline/Pipeline';
-import { firstFilter } from '../../PipelineServer/filters/filters';
+import { firstFilter, secondFilter } from '../../PipelineServer/filters/filters';
 import { CustomData } from '../../data-structure/CustomData';
 import { z } from 'zod'; // importing zod for validation of request bodies
-import { lstat } from 'fs';
 
 require('dotenv').config('../.env');
 
 const app: Express = express();
 const port: number = 3005;
 const queueFactory = QueueFactory.getQueueFactory<CustomData>; 
-const pipeline = new Pipeline<CustomData>([firstFilter], queueFactory);
+const pipeline = new Pipeline<CustomData>([firstFilter, secondFilter], queueFactory);
 
 app.use(express.json());
 
@@ -22,7 +21,7 @@ const CustomDataSchema = z.object({
   // field4: z.string(),
 });
 
-app.post('/testing', (req: Request, res: Response) => {
+app.post('/process', (req: Request, res: Response) => {
 
   pipeline.on('finalOutput', (output) => {
       console.log(`Salida final: ${output.data}`);
