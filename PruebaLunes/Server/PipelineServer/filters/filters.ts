@@ -8,3 +8,15 @@ export const firstFilter = (input: CustomData): CustomData => {
     console.log(`Filtro toLowercaseWithSpaces,  input${JSON.stringify(input)}, output ${result} }`)
     return {data: result}
 };
+
+// Segundo filtro: Reemplaza los espacios por guiones bajos, asincronico con timeout forzado.
+export const secondFilter = async (input: CustomData): Promise<CustomData> => {
+    const result = await new Promise<CustomData>((resolve) => {
+        setTimeout(() => {
+            let result: string = input.data.replace(/ /g, '_'); // Reemplaza los espacios por guiones bajos.
+            console.log(`Filtro replaceSpacesWithUnderscores,  input${JSON.stringify(input)}, output ${result} }`)
+            resolve({data: result});
+        }, 1000); // Simula un retraso de 1 segundo.
+    });
+    return result;
+}
